@@ -1,0 +1,10 @@
+await page.evaluate(()=>localStorage.removeItem('melonflow.qa.best'));
+await page.reload({waitUntil:'load'});
+await page.setViewportSize({width:1505,height:1045});
+await page.evaluate(()=>{document.querySelector('[data-mode="soft"]').click();MelonFlowQA.advance(180);});
+const preview=await page.screenshot({fullPage:true});
+await page.goto('file:///D:/Desktop/%E7%B4%A0%E6%9D%90/%E5%88%9B%E4%BD%9C/MelonFlow/MelonFlow.html',{waitUntil:'load'});
+const cdp=await context.newCDPSession(page);
+await cdp.send('Emulation.clearDeviceMetricsOverride');
+await cdp.detach();
+return{preview,ready:await page.evaluate(()=>!!window.MelonFlow&&!window.MelonFlowQA),errors:globalThis.refreshErrors||[],url:page.url()};

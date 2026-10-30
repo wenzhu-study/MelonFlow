@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f8f4">
+  <meta name="description" content="瓜叽 MelonFlow，一池软乎乎的水果，半流体物理合成小游戏。">
+  <title>瓜叽 MelonFlow · 半流体水果派对</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="vendor/matter.min.js"></script>
+  <script defer src="vendor/lucide.min.js"></script>
+  <script defer src="fruit-art.js"></script>
+  <script defer src="game.js"></script>
+</head>
+<body>
+  <canvas id="orchard-backdrop" aria-hidden="true"></canvas>
+  <div class="app-shell">
+    <header class="site-header">
+      <a class="brand" href="./index.html" aria-label="瓜叽 MelonFlow 首页">
+        <canvas class="brand-fruit" width="112" height="112" aria-hidden="true"></canvas>
+        <span class="brand-type"><strong>瓜叽<span class="brand-dot">.</span></strong><span>MELONFLOW</span></span>
+      </a>
+      <span class="header-caption">一颗水果的软着陆计划</span>
+      <nav class="header-actions" aria-label="游戏设置">
+        <button class="icon-button" id="help-button" title="玩法" aria-label="查看玩法"><i data-lucide="circle-help"></i></button>
+        <button class="icon-button" id="sound-button" title="开启声音" aria-label="开启声音" aria-pressed="false"><i data-lucide="volume-x"></i></button>
+        <button class="icon-button" id="pause-button" title="暂停" aria-label="暂停游戏" aria-pressed="false"><i data-lucide="pause"></i></button>
+        <span class="action-divider"></span>
+        <button class="icon-button" id="restart-button" title="重新开始" aria-label="重新开始"><i data-lucide="rotate-ccw"></i></button>
+      </nav>
+    </header>
+
+    <main class="game-layout">
+      <aside class="left-column">
+        <div class="intro">
+          <div class="eyebrow"><span class="live-dot"></span> 半流体水果派对</div>
+          <h1>软乎乎，<br>碰个<span class="pink-word">大西瓜</span>。</h1>
+          <span class="handwritten">今天的快乐，含瓜量 100%</span>
+        </div>
+
+        <section class="score-section" aria-label="分数">
+          <div class="section-label"><i data-lucide="sparkles"></i> 本局得分</div>
+          <div id="score" class="score-number" aria-live="polite">0</div>
+          <div class="best-score"><i data-lucide="trophy"></i> 个人最佳 <strong id="best-score">0</strong></div>
+        </section>
+
+        <section class="next-section" aria-label="下一颗水果">
+          <div><div class="section-label">下一颗</div><div class="next-name" id="next-name">小草莓</div></div>
+          <div class="next-fruit-wrap"><canvas id="next-fruit" width="160" height="160" aria-label="下一颗水果预览"></canvas><span class="next-plus">+</span></div>
+        </section>
+
+        <section class="physics-section" aria-labelledby="physics-heading">
+          <h2 id="physics-heading"><i data-lucide="sliders-horizontal"></i> 今天，什么手感？</h2>
+          <div class="mode-options" role="group" aria-label="水果物态">
+            <button data-mode="jelly" aria-pressed="false"><i data-lucide="box"></i><span>果冻</span></button>
+            <button data-mode="soft" class="active" aria-pressed="true"><i data-lucide="blend"></i><span>半流体</span></button>
+            <button data-mode="juice" aria-pressed="false"><i data-lucide="droplets"></i><span>果汁</span></button>
+          </div>
+          <div class="material-readout"><span id="mode-state">柔软度</span><span class="softness-meter" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b></span><span id="mode-value">SOFT</span></div>
+        </section>
+
+        <div class="little-note"><i data-lucide="heart"></i><span>慢慢来，好事会发生。</span></div>
+      </aside>
+
+      <section class="play-column" aria-label="水果合成果池">
+        <div class="stage-heading"><span><span class="live-dot"></span> <span id="stage-status">果池营业中</span></span><span class="stage-id">NO. 001 / MELON CLUB</span></div>
+        <div class="tank" id="tank">
+          <div class="tank-topline"></div>
+          <canvas id="game-canvas" width="520" height="640" tabindex="0" aria-label="水果果池，移动指针瞄准，点击投放；方向键瞄准，回车投放"></canvas>
+          <div class="tank-watermark" aria-hidden="true"><span>just go</span><strong>with the flow.</strong><i data-lucide="waves"></i></div>
+          <div class="danger-tag" aria-hidden="true">满满警戒线</div>
+          <div class="combo-toast" id="combo-toast" role="status"></div>
+          <div class="tank-overlay" id="pause-overlay" hidden><div class="overlay-symbol"><i data-lucide="coffee"></i></div><h2>休息一小口</h2><p>水果们也在等你。</p><button class="primary-button" id="resume-button"><i data-lucide="play"></i> 继续快乐</button></div>
+          <div class="tank-overlay" id="gameover-overlay" hidden><canvas id="over-fruit" width="200" height="200"></canvas><div class="eyebrow">这池快乐，已满格</div><h2>下次一定有大西瓜</h2><p>本局得分 <strong id="final-score">0</strong></p><button class="primary-button" id="again-button"><i data-lucide="rotate-ccw"></i> 再来一池</button></div>
+        </div>
+        <div class="tilt-controls"><button id="tilt-left" class="tilt-button" title="向左倾斜（A）" aria-label="向左倾斜"><i data-lucide="rotate-ccw"></i></button><span><i data-lucide="move-horizontal"></i> 轻轻晃一晃</span><button id="tilt-right" class="tilt-button" title="向右倾斜（D）" aria-label="向右倾斜"><i data-lucide="rotate-cw"></i></button></div>
+      </section>
+
+      <aside class="right-column">
+        <section class="goal-section" aria-label="终极目标">
+          <span class="tag">TODAY'S LITTLE GOAL</span>
+          <h2>养出一颗大西瓜</h2>
+          <div class="goal-fruit"><span class="spark spark-one">✧</span><canvas id="goal-fruit" width="340" height="300" aria-label="软萌西瓜"></canvas><span class="spark spark-two">✧</span></div>
+          <span class="goal-caption">「 我在终点等你呀 」</span>
+        </section>
+
+        <section class="evolution-section" aria-labelledby="evolution-heading">
+          <div class="section-title"><h2 id="evolution-heading">水果成长日记</h2><span id="discovered-count">5 / 11</span></div>
+          <div class="fruit-collection" id="fruit-collection"></div>
+          <div class="evolution-foot"><span class="mini-line"></span> 下一站，大一点的自己 <span class="mini-line"></span></div>
+        </section>
+
+        <section class="stir-section" aria-label="搅动果池">
+          <button class="stir-button" id="stir-button"><i data-lucide="wind"></i><span>搅一搅</span><small>−30</small><i data-lucide="zap" class="small-zap"></i></button>
+          <div class="energy-label"><span><i data-lucide="zap"></i> 快乐能量</span><strong><span id="energy-value">100</span><small> / 100</small></strong></div>
+          <div class="energy-track" role="progressbar" aria-label="快乐能量" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><div id="energy-fill"></div></div>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="site-footer"><span>一点点重力，一整池好心情。</span><span class="footer-brand">MADE OF FRUIT & GOOD MOODS <i data-lucide="flower-2"></i></span></footer>
+  </div>
+
+  <dialog id="help-dialog" class="modal">
+    <button class="icon-button modal-close" aria-label="关闭玩法"><i data-lucide="x"></i></button>
+    <div class="eyebrow">WELCOME TO MELON CLUB</div><h2>一池水果，慢慢变大。</h2>
+    <p>移动鼠标瞄准，点击投放；在手机上拖动瞄准，松手投放。两颗相同的水果碰在一起，就会融合长大。</p>
+    <p>直接按住水果，就可以揉捏、拉伸，松手后软软地弹回来。切换果冻、半流体、果汁，感受不同弹性。</p>
+    <p>按住左右按钮倾斜果池，或消耗 30 能量搅一搅。能量会慢慢恢复。</p>
+    <p>水果持续超过警戒线 3 秒，本局结束。合出大西瓜后可以继续挑战更高分！</p>
+    <div class="key-guide"><span><kbd>←</kbd><kbd>→</kbd> 瞄准</span><span><kbd>Enter</kbd> 投放</span><span><kbd>A</kbd><kbd>D</kbd> 倾斜</span><span><kbd>Space</kbd> 搅动</span><span><kbd>P</kbd> 暂停</span></div>
+    <button class="primary-button modal-close">好，开瓜！ <i data-lucide="arrow-right"></i></button>
+  </dialog>
+  <dialog id="restart-dialog" class="modal compact-modal"><h2>开启新的一池？</h2><p>本局进度将重新开始，个人最佳会保留。</p><div class="dialog-actions"><button class="secondary-button" id="cancel-restart">继续这局</button><button class="primary-button" id="confirm-restart">重新开始</button></div></dialog>
+  <div id="notice" class="notice" role="status"></div>
+  <noscript>请开启浏览器 JavaScript 来玩瓜叽。</noscript>
+</body>
+</html>

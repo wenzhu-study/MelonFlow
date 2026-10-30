@@ -1,0 +1,11 @@
+await page.goto('file:///D:/Desktop/%E7%B4%A0%E6%9D%90/%E5%88%9B%E4%BD%9C/MelonFlow/MelonFlow.html', {waitUntil:'load'});
+await page.setViewportSize({width:1440,height:960});
+const canvas=page.locator('#game-canvas');
+await canvas.focus();
+const focused=await canvas.evaluate(element=>({style:getComputedStyle(element).outlineStyle,width:getComputedStyle(element).outlineWidth,active:document.activeElement===element}));
+if(focused.style!=='none'||!focused.active)throw new Error('Canvas focus outline remains: '+JSON.stringify(focused));
+const rect=await canvas.boundingBox();
+await page.mouse.click(rect.x+rect.width*.5,rect.y+rect.height*.4);
+const clicked=await canvas.evaluate(element=>({style:getComputedStyle(element).outlineStyle,width:getComputedStyle(element).outlineWidth,active:document.activeElement===element}));
+if(clicked.style!=='none'||!clicked.active)throw new Error('Canvas click outline remains: '+JSON.stringify(clicked));
+return {focused,clicked,gameReady:await page.evaluate(()=>Boolean(window.MelonFlow)),screenshot:await page.screenshot({fullPage:false})};

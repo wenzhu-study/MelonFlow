@@ -1,0 +1,1 @@
+return {url:page.url(),view:await page.evaluate(()=>({ready:document.readyState,matter:typeof Matter,art:typeof FruitArt,game:typeof MelonFlow,lucide:typeof lucide,hidden:document.hidden,canvas:document.getElementById('game-canvas')?.width,body:document.body.innerText.slice(0,1800),state:window.MelonFlow?.getState()})),screenshot:await page.screenshot({fullPage:false})};
