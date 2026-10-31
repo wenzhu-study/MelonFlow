@@ -3,7 +3,6 @@
   const {Engine, Bodies, Body, Composite, Constraint, Events} = Matter;
   const {fruits: TYPES, draw: drawFruit, icon: fruitIcon} = FruitArt;
   const $ = id => document.getElementById(id);
-  const QA = new URLSearchParams(location.search).get('qa') === '1';
   const canvas = $('game-canvas'), ctx = canvas.getContext('2d');
   const W = 520, H = 640, FLOOR = 625, LEFT = 14, RIGHT = 506, LIMIT = 116;
   const FIXED = 1000 / 60, NODE_COUNT = 14, TAU = Math.PI * 2;
@@ -22,17 +21,17 @@
   Composite.add(engine.world,walls);
   let fruits=[],particles=[],floaters=[],pendingMerges=[];
   let score=0,best=0,energy=100,mode='soft',current=1,next=0;
-  let paused=false,over=false,sound=false,started=false,tilt=0,aim=W/2;
+  let paused=false,over=false,sound=true,started=false,tilt=0,aim=W/2;
   let gameTime=0,lastDrop=-1000,lastMerge=-1000,combo=0,dropCount=0;
-  let nextId=1,discovered=new Set(),audio=null,lastTime=0,accumulator=0,lastUI=0;
+  let nextId=1,discovered=new Set(),lastTime=0,accumulator=0,lastUI=0;
   let toastTimer,noticeTimer,autoPaused=false,modalWasPaused=false;
-  let grab=null;
   const pendingIds=new Set();
   const storage = {
-    read(key,fallback){try{return JSON.parse(localStorage.getItem((QA?'melonflow.qa.':'melonflow.')+key))??fallback;}catch{return fallback;}},
-    write(key,value){try{localStorage.setItem((QA?'melonflow.qa.':'melonflow.')+key,JSON.stringify(value));}catch{/* Private browsing may disable storage. */}},
+    read(key,fallback){try{return JSON.parse(localStorage.getItem('melonflow.'+key))??fallback;}catch{return fallback;}},
+    write(key,value){try{localStorage.setItem('melonflow.'+key,JSON.stringify(value));}catch{/* Private browsing may disable storage. */}},
   };
-  best=Number(storage.read('best',0))||0;sound=storage.read('sound',false)===true;
+  best=Number(storage.read('best',0))||0;sound=storage.read('sound',true)!==false;
+  const audio=MelonAudio.create(sound);
   if(MODE[storage.read('mode','soft')])mode=storage.read('mode','soft');
 
   function resizeCanvas(){
@@ -87,8 +86,7 @@
     const fruit={id,type,r,ringR,nodeR,composite,core,nodes,links,born:gameTime,danger:0,angle:0,targetArea:NODE_COUNT/2*ringR*ringR*Math.sin(TAU/NODE_COUNT)};
     fruits.push(fruit);discover(type);return fruit;
   }
-  function releaseGrab(){if(grab){Composite.remove(engine.world,grab.constraint);grab=null;}canvas.style.cursor='crosshair';}
-  function removeFruit(f){if(grab?.fruitId===f.id)releaseGrab();Composite.remove(engine.world,f.composite,true);fruits=fruits.filter(x=>x.id!==f.id);}
+  function removeFruit(f){Composite.remove(engine.world,f.composite,true);fruits=fruits.filter(x=>x.id!==f.id);}
   function discover(type){
     if(discovered.has(type))return;discovered.add(type);
     const item=document.querySelector('.fruit-item[data-type="'+type+'"]');item.classList.remove('undiscovered');item.classList.add('just-found');
@@ -118,6 +116,7 @@
     $('stir-button').disabled=energy<30||paused||over;
   }
   function resetGame(){
+    audio.cancel();
     for(const f of [...fruits])removeFruit(f);
     Engine.clear(engine);pendingMerges=[];pendingIds.clear();particles=[];floaters=[];
     score=0;energy=100;gameTime=0;lastDrop=-1000;lastMerge=-1000;combo=0;dropCount=0;over=false;paused=false;autoPaused=false;tilt=0;aim=W/2;
@@ -131,9 +130,9 @@
   }
   function drop(){
     if(paused||over||gameTime-lastDrop<520||document.querySelector('dialog[open]'))return;
-    wakeAudio();const r=TYPES[current].r;
+    const droppedType=current,r=TYPES[current].r;
     createFruit(current,Math.max(LEFT+r+2,Math.min(RIGHT-r-2,aim)),48,tilt*1.5,1);
-    current=next;next=pickFruit();lastDrop=gameTime;dropCount++;updateNext();tone(350+current*55,.1,'sine',.035);
+    current=next;next=pickFruit();lastDrop=gameTime;dropCount++;updateNext();audio.play('drop',droppedType);
   }
 
   function collisions(event){
@@ -161,7 +160,7 @@
       if(score>best){best=score;storage.write('best',best);}
       scoreUI();spawnBurst(x,y,TYPES[type].color,type>8?36:16);
       floaters.push({x,y:y-20,text:'+'+points,life:1,color:TYPES[type].dark});
-      tone(380+type*65,.18,'sine',.04);setTimeout(()=>tone(570+type*70,.22,'sine',.02),70);
+      audio.play('merge',type);
       if(type===10){showCombo(maxed?'西瓜自由！':'大西瓜诞生啦！');showNotice('合出大西瓜！继续挑战你的最高分');}
       else if(combo>1)showCombo(combo+' 连合 · 软萌暴击');
     }
@@ -215,14 +214,12 @@
     for(const p of floaters){p.y-=.75;p.life-=.015;}floaters=floaters.filter(p=>p.life>0);
   }
   function finishGame(){
-    over=true;releaseGrab();setTilt(0);$('final-score').textContent=score.toLocaleString();$('gameover-overlay').hidden=false;
+    over=true;setTilt(0);$('final-score').textContent=score.toLocaleString();$('gameover-overlay').hidden=false;
     $('stage-status').textContent='这一池，圆满结束';energyUI();storage.write('session',null);tone(210,.3,'sine',.03);
   }
 
-  function smoothPath(points){
-    ctx.beginPath();for(let i=0;i<points.length;i++){const p=points[i],n=points[(i+1)%points.length];if(!i)ctx.moveTo((p.x+n.x)/2,(p.y+n.y)/2);else ctx.quadraticCurveTo(p.x,p.y,(p.x+n.x)/2,(p.y+n.y)/2);}const p=points[0],n=points[1];ctx.quadraticCurveTo(p.x,p.y,(p.x+n.x)/2,(p.y+n.y)/2);ctx.closePath();
-  }
   function render(){
+    FruitArt.animateIcons(gameTime*.001);
     ctx.clearRect(0,0,W,H);
     // Shallow pooled color gives the glass a little life without hiding the fruit.
     ctx.fillStyle='#dfeeda45';ctx.beginPath();ctx.moveTo(0,H-17);
@@ -234,7 +231,7 @@
     for(const f of fruits){
       const center=f.core.position;
       const points=f.nodes.map(n=>{const dx=n.position.x-center.x,dy=n.position.y-center.y,len=Math.hypot(dx,dy)||1;return{x:dx+dx/len*f.nodeR*.95,y:dy+dy/len*f.nodeR*.95};});
-      drawFruit(ctx,f.type,center.x,center.y,f.r,{points,time:gameTime*.001+f.id*.3,happy:gameTime-f.born<600});
+      drawFruit(ctx,f.type,center.x,center.y,f.r,{points,time:gameTime*.001,seed:f.id*13+f.type,happy:gameTime-f.born<600});
     }
     for(const p of particles){
       ctx.save();ctx.globalAlpha=Math.min(1,p.life);ctx.translate(p.x,p.y);ctx.rotate(p.spin);ctx.fillStyle=p.color;
@@ -249,13 +246,13 @@
       ctx.save();ctx.globalAlpha=gameTime-lastDrop<520?.3:1;
       ctx.strokeStyle='#a4bd9680';ctx.setLineDash([3,8]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,53+r);ctx.lineTo(x,landing-10);ctx.stroke();ctx.setLineDash([]);
       ctx.fillStyle='#96b68a35';ctx.beginPath();ctx.ellipse(x,Math.min(FLOOR-2,landing-2),r*.7,3,0,0,TAU);ctx.fill();
-      drawFruit(ctx,current,x,48+Math.sin(gameTime*.002)*2,r,{time:gameTime*.001,noShadow:true});
+      drawFruit(ctx,current,x,48+Math.sin(gameTime*.002)*2,r,{time:gameTime*.001,seed:59+current,noShadow:true});
       ctx.strokeStyle='#9ab58b';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x-3,15);ctx.lineTo(x,18);ctx.lineTo(x+3,15);ctx.stroke();ctx.restore();
     }
   }
   function frame(timestamp){
     const delta=Math.min(50,timestamp-(lastTime||timestamp));lastTime=timestamp;
-    if(!QA&&!paused&&!over&&!document.hidden&&started){
+    if(!paused&&!over&&!document.hidden&&started){
       accumulator+=delta;let steps=0;
       while(accumulator>=FIXED&&steps<3){step();accumulator-=FIXED;steps++;if(over)break;}
     }else accumulator=0;
@@ -266,45 +263,31 @@
   function setIcon(button,name){button.innerHTML='<i data-lucide="'+name+'"></i>';lucide.createIcons({nodes:[button]});}
   function setPauseIcon(){setIcon($('pause-button'),paused?'play':'pause');$('pause-button').setAttribute('aria-label',paused?'继续游戏':'暂停游戏');$('pause-button').title=paused?'继续':'暂停';$('pause-button').setAttribute('aria-pressed',paused);}
   function setPaused(value){
-    if(over)return;paused=value;releaseGrab();setTilt(0);$('pause-overlay').hidden=!paused;setPauseIcon();energyUI();
+    if(value)audio.cancel();
+    if(over)return;paused=value;setTilt(0);$('pause-overlay').hidden=!paused;setPauseIcon();energyUI();
     $('stage-status').textContent=paused?'水果休息中':'果池营业中';
   }
   function updateSound(){setIcon($('sound-button'),sound?'volume-2':'volume-x');$('sound-button').setAttribute('aria-label',sound?'关闭声音':'开启声音');$('sound-button').setAttribute('aria-pressed',sound);$('sound-button').title=sound?'关闭声音':'开启声音';}
   function wakeAudio(){
-    if(!sound)return;
-    try{if(!audio)audio=new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume().catch(()=>{});}catch{sound=false;updateSound();}
+    return audio.unlock();
   }
   function tone(freq,duration,type='sine',volume=.04){
-    if(!sound||!audio||audio.state!=='running')return;
-    const oscillator=audio.createOscillator(),gain=audio.createGain();oscillator.type=type;
-    oscillator.frequency.setValueAtTime(freq,audio.currentTime);oscillator.frequency.exponentialRampToValueAtTime(freq*.7,audio.currentTime+duration);
-    gain.gain.setValueAtTime(volume,audio.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);
-    oscillator.connect(gain);gain.connect(audio.destination);oscillator.start();oscillator.stop(audio.currentTime+duration+.01);
-    oscillator.onended=()=>{oscillator.disconnect();gain.disconnect();};
+    return audio.tone(freq,duration,type,volume);
   }
+  document.addEventListener('pointerdown',event=>{if(!event.target.closest('#sound-button'))wakeAudio();},{capture:true,passive:true});
+  document.addEventListener('keydown',wakeAudio,{capture:true});
   function pointAim(event){const rect=canvas.getBoundingClientRect();aim=Math.max(35,Math.min(W-35,(event.clientX-rect.left)/rect.width*W));}
-  function pointerPosition(event){const rect=canvas.getBoundingClientRect();return{x:Math.max(LEFT,Math.min(RIGHT,(event.clientX-rect.left)/rect.width*W)),y:Math.max(25,Math.min(FLOOR,(event.clientY-rect.top)/rect.height*H))};}
-  function fruitAt(p){return [...fruits].reverse().find(f=>Math.hypot(p.x-f.core.position.x,p.y-f.core.position.y)<f.r);}
-  let activePointer=null,gestureWasGrab=false;
+  let activePointer=null;
   canvas.addEventListener('pointerdown',event=>{
     if(activePointer!==null||event.button>0||paused||over)return;
     event.preventDefault();canvas.focus({preventScroll:true});activePointer=event.pointerId;pointAim(event);canvas.setPointerCapture(event.pointerId);
-    const p=pointerPosition(event),fruit=fruitAt(p);gestureWasGrab=!!fruit;
-    if(fruit){
-      const nearest=fruit.nodes.reduce((a,b)=>Math.hypot(a.position.x-p.x,a.position.y-p.y)<Math.hypot(b.position.x-p.x,b.position.y-p.y)?a:b);
-      const constraint=Constraint.create({pointA:p,bodyB:nearest,length:0,stiffness:.13,damping:.12});
-      Composite.add(engine.world,constraint);grab={constraint,fruitId:fruit.id};canvas.style.cursor='grabbing';wakeAudio();
-    }
   });
   canvas.addEventListener('pointermove',event=>{
     if(event.pointerType==='mouse'||event.pointerId===activePointer)pointAim(event);
-    const p=pointerPosition(event);
-    if(grab&&event.pointerId===activePointer)grab.constraint.pointA=p;
-    else if(activePointer===null)canvas.style.cursor=fruitAt(p)?'grab':'crosshair';
   });
-  canvas.addEventListener('pointerup',event=>{if(event.pointerId!==activePointer)return;pointAim(event);activePointer=null;releaseGrab();if(!gestureWasGrab)drop();});
-  canvas.addEventListener('pointercancel',()=>{activePointer=null;releaseGrab();});
-  canvas.addEventListener('lostpointercapture',()=>{activePointer=null;releaseGrab();});
+  canvas.addEventListener('pointerup',event=>{if(event.pointerId!==activePointer)return;pointAim(event);activePointer=null;drop();});
+  canvas.addEventListener('pointercancel',()=>{activePointer=null;});
+  canvas.addEventListener('lostpointercapture',()=>{activePointer=null;});
   for(const [id,direction] of [['tilt-left',-1],['tilt-right',1]]){
     const button=$(id);
     button.addEventListener('pointerdown',event=>{event.preventDefault();button.setPointerCapture(event.pointerId);setTilt(direction);});
@@ -326,13 +309,13 @@
     }
   });
   window.addEventListener('keyup',event=>{if(['a','d'].includes(event.key.toLowerCase()))setTilt(0);});
-  window.addEventListener('blur',()=>{setTilt(0);activePointer=null;releaseGrab();});
+  window.addEventListener('blur',()=>{setTilt(0);activePointer=null;});
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden&&!paused&&!over){autoPaused=true;setPaused(true);}
     else if(!document.hidden&&autoPaused){autoPaused=false;setPaused(false);}
   });
   $('pause-button').addEventListener('click',()=>setPaused(!paused));$('resume-button').addEventListener('click',()=>setPaused(false));
-  $('sound-button').addEventListener('click',()=>{sound=!sound;storage.write('sound',sound);wakeAudio();updateSound();tone(660,.12);});
+  $('sound-button').addEventListener('click',()=>{sound=!sound;storage.write('sound',sound);audio.setEnabled(sound);updateSound();if(sound)audio.play('enabled');});
   $('stir-button').addEventListener('click',stir);$('again-button').addEventListener('click',resetGame);
   document.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>setMode(button.dataset.mode)));
   function openDialog(dialog){modalWasPaused=paused;setPaused(true);dialog.showModal();}
@@ -348,7 +331,7 @@
   $('confirm-restart').addEventListener('click',()=>{closeDialog($('restart-dialog'));modalWasPaused=false;resetGame();});
 
   function saveSession(){
-    if(!started||over||QA)return;
+    if(!started||over)return;
     storage.write('session',{version:1,score,energy,current,next,dropCount,discovered:[...discovered],fruits:fruits.map(f=>({type:f.type,x:f.core.position.x,y:f.core.position.y})),savedAt:Date.now()});
   }
   function restoreSession(){
@@ -362,14 +345,5 @@
     (saved.discovered||[]).filter(type=>Number.isInteger(type)&&TYPES[type]).forEach(discover);scoreUI();energyUI();updateNext();
   }
   window.addEventListener('pagehide',saveSession);setInterval(saveSession,3000);
-  setMode(mode,false);resetGame();if(!QA)restoreSession();updateSound();requestAnimationFrame(frame);
-
-  // Read-only state makes browser smoke checks possible without affecting a game.
-  window.MelonFlow=Object.freeze({getState:()=>({score,best,energy,mode,current,next,paused,over,dropCount,gameTime,fruitCount:fruits.length,bodyCount:Composite.allBodies(engine.world).length,fruits:fruits.map(f=>({id:f.id,type:f.type,x:f.core.position.x,y:f.core.position.y,deformation:Math.max(...f.nodes.map(n=>Math.hypot(n.position.x-f.core.position.x,n.position.y-f.core.position.y)))-Math.min(...f.nodes.map(n=>Math.hypot(n.position.x-f.core.position.x,n.position.y-f.core.position.y)))}))})});
-  if(QA)window.MelonFlowQA=Object.freeze({
-    advance(frames){for(let i=0;i<Math.min(600,frames);i++)if(!paused&&!over)step();render();energyUI();return window.MelonFlow.getState();},
-    clear(){for(const f of [...fruits])removeFruit(f);pendingMerges=[];pendingIds.clear();},
-    spawn(type,x,y,anchored=false){if(TYPES[type]){const fruit=createFruit(type,x,y);if(anchored)for(const body of [fruit.core,...fruit.nodes])Body.setStatic(body,true);}},
-    reset:resetGame,
-  });
+  setMode(mode,false);resetGame();restoreSession();updateSound();requestAnimationFrame(frame);
 })();

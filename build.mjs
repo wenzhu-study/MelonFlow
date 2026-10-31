@@ -5,9 +5,11 @@ const licenses = await Promise.all(['vendor/MATTER-LICENSE.txt', 'vendor/LUCIDE-
 html = html.replace('<head>', () => `<head>\n<!-- Third-party licenses\n${licenses.join('\n\n')}\n-->`);
 const css = await readFile(new URL('./styles.css', import.meta.url), 'utf8');
 html = html.replace('<link rel="stylesheet" href="styles.css">', () => `<style>\n${css}\n</style>`);
-for (const file of ['vendor/matter.min.js', 'vendor/lucide.min.js', 'fruit-art.js', 'game.js']) {
+const favicon = await readFile(new URL('./favicon.svg', import.meta.url));
+html = html.replace('href="favicon.svg"', `href="data:image/svg+xml;base64,${favicon.toString('base64')}"`);
+for (const file of ['vendor/matter.min.js', 'vendor/lucide.min.js', 'fruit-art.js', 'game-audio.js', 'game.js']) {
   const source = await readFile(new URL(file, import.meta.url), 'utf8');
-  html = html.replace(`<script defer src="${file}"></script>`, '');
+  html = html.replace(`  <script defer src="${file}"></script>`, '');
   html = html.replace('</body>', () => `<script>\n${source.replaceAll('</script', '<\\/script')}\n</script>\n</body>`);
 }
 html = html.replace('href="./index.html"', 'href="./MelonFlow.html"');

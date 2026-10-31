@@ -5,14 +5,10 @@
   background: #eef9ec;
   font-synthesis: none;
   --ink: #194e43;
-  --muted: #7e9786;
-  --green: #68aa70;
-  --line: #dcebd6;
-  --pink: #ed76a0;
-  --mint: #e8f4e2;
-  --glass: linear-gradient(145deg, #ffffffd9, #fffffff0 55%, #fafff8b5);
 }
 * { box-sizing: border-box; letter-spacing: 0; }
+html, body { scrollbar-width: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; }
 body { margin: 0; min-width: 320px; background: linear-gradient(125deg, #f1faf5 0%, #e5f6e3 39%, #edf8e8 66%, #fff8f0 100%); }
 #orchard-backdrop { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; filter: blur(1.2px); }
 button, a { -webkit-tap-highlight-color: transparent; }
@@ -27,7 +23,7 @@ h1, h2, p { margin: 0; }
 h2 { font-size: 16px; font-weight: 650; }
 [hidden] { display: none !important; }
 .app-shell { position: relative; z-index: 1; max-width: 1440px; padding: 20px 48px 0; margin: auto; }
-.site-header { height: 80px; display: flex; align-items: center; border: 1px solid #ffffffdb; border-radius: 40px; padding: 0 27px; gap: 31px; background: linear-gradient(110deg, #ffffffc9, #ffffffe0 52%, #fafffa8f); box-shadow: 0 7px 25px #648e4b04, inset 0 1px 0 #fff; backdrop-filter: blur(12px); }
+.site-header { height: 80px; display: flex; align-items: center; border-bottom: 1px solid #a6c8a660; padding: 0 27px; gap: 31px; }
 .brand { display: flex; align-items: center; text-decoration: none; color: var(--ink); gap: 10px; }
 .brand-fruit { width: 56px; height: 56px; transform: rotate(-8deg); }
 .brand-type { display: flex; flex-direction: column; gap: 0; }
@@ -37,14 +33,14 @@ h2 { font-size: 16px; font-weight: 650; }
 .header-caption { font-size: 13px; color: #7f9388; padding-top: 6px; }
 .header-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
 .icon-button { width: 42px; height: 42px; border: 1px solid transparent; background: transparent; color: #6d8876; border-radius: 50%; display: grid; place-items: center; }
-.icon-button:first-child, .icon-button:last-child { background: #ffffff82; border-color: #ffffffc9; box-shadow: inset 0 1px 2px #fff; }
-.icon-button:hover { background: #fff; color: #378757; box-shadow: 0 4px 12px #7fbc7d1f; }
+.icon-button:first-child, .icon-button:last-child { background: #dfeede80; border-color: #a6c8a640; }
+.icon-button:hover { background: #d9ead8; color: #378757; }
 .icon-button svg { width: 22px; height: 22px; }
 .action-divider { width: 1px; height: 22px; background: #cfe5ce; margin: 0 3px; }
 
 .game-layout { display: grid; grid-template-columns: minmax(235px, .94fr) minmax(390px, 1.58fr) minmax(235px, .94fr); gap: 22px; margin: 24px 0 18px; align-items: start; }
 .left-column, .right-column { min-width: 0; }
-.left-column { background: linear-gradient(150deg, #ffffffc4, #ffffff8f 48%, #ffffffe0); border: 1px solid #ffffffd9; border-radius: 38px; padding: 24px 23px 23px; box-shadow: 0 12px 36px #83a97407; backdrop-filter: blur(9px); }
+.left-column { padding: 24px 23px 23px; }
 .intro { padding: 0 0 7px; }
 .eyebrow { font-size: 12px; font-weight: 650; color: #4f8d5c; display: inline-flex; align-items: center; gap: 8px; }
 .intro .eyebrow { border-radius: 20px; padding: 8px 12px; margin-left: -1px; background: #e6f4de; }
@@ -52,7 +48,7 @@ h2 { font-size: 16px; font-weight: 650; }
 .intro h1 { font-size: 35px; line-height: 1.53; font-weight: 850; margin-top: 14px; white-space: nowrap; }
 .pink-word { color: #ec7299; }
 .handwritten { font-size: 13px; color: #7f9688; display: block; margin-top: 9px; line-height: 1.7; }
-.score-section { position: relative; padding: 19px 23px 18px; margin: 19px -24px 0; border: 1px solid #fff; border-radius: 29px; background: linear-gradient(130deg, #ffffffdb, #fffffff0 62%, #fff3edc4); box-shadow: 0 4px 21px #a9ce940b; }
+.score-section { position: relative; padding: 19px 23px 18px; margin: 19px -24px 0; border-top: 1px solid #9dbb9a61; border-radius: 0; }
 .section-label { font-size: 13px; color: #749378; display: flex; gap: 8px; align-items: center; }
 .score-section .section-label { display: inline-flex; padding: 6px 11px; border-radius: 20px; background: #ebf5e5; font-size: 12px; }
 .section-label svg { width: 15px; height: 15px; color: #6ab847; }
@@ -61,7 +57,7 @@ h2 { font-size: 16px; font-weight: 650; }
 .best-score { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #859780; margin-top: 10px; }
 .best-score svg { width: 16px; height: 16px; color: #cea75c; }
 .best-score strong { font-size: 15px; font-weight: 500; color: #718269; margin-left: auto; }
-.next-section { display: flex; align-items: center; justify-content: space-between; padding: 13px 23px; margin: 15px -24px 0; min-height: 108px; border: 1px solid #ffffffba; border-radius: 28px; background: linear-gradient(125deg, #ffffffd9, #ffffff80); }
+.next-section { display: flex; align-items: center; justify-content: space-between; padding: 13px 23px; margin: 15px -24px 0; min-height: 108px; border-top: 1px solid #9dbb9a61; border-radius: 0; }
 .next-section .section-label { background: #eaf5e4; display: inline-flex; border-radius: 16px; padding: 5px 13px; }
 .next-name { font-size: 16px; font-weight: 650; margin-top: 10px; }
 .next-fruit-wrap { width: 84px; height: 84px; position: relative; background: linear-gradient(135deg, #f6f8ed, #f3f1e4b3); border: 1px solid #ffffffc9; border-radius: 50%; }
@@ -73,7 +69,7 @@ h2 { font-size: 16px; font-weight: 650; }
 .mode-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; background: #eaf2e5; padding: 3px; border-radius: 12px; margin-top: 16px; }
 .mode-options button { display: flex; flex-direction: column; align-items: center; gap: 8px; border: 1px solid transparent; color: #7a927c; background: transparent; padding: 10px 2px; border-radius: 10px; font-size: 12px; white-space: nowrap; }
 .mode-options button svg { width: 22px; height: 22px; }
-.mode-options button.active { background: #fffffffa; color: #34865b; border-color: #fff; box-shadow: 0 4px 10px #87b0881f; }
+.mode-options button.active { background: #d6ebd5; color: #34865b; border-color: #a6c8a66b; }
 .material-readout { display: flex; gap: 9px; align-items: center; color: #8ca086; font-size: 11px; margin-top: 18px; }
 .material-readout > span:last-child { margin-left: auto; font-size: 10px; }
 .softness-meter { display: flex; gap: 4px; }
@@ -98,7 +94,7 @@ h2 { font-size: 16px; font-weight: 650; }
 .tank-watermark svg { margin-top: 14px; width: 36px; height: 27px; stroke-width: 1; }
 .danger-tag { position: absolute; top: 17.5%; right: 21px; font-size: 9px; color: #91aa8a; background: #f5fbf1b8; padding: 0 5px; pointer-events: none; z-index: 3; }
 .tilt-controls { display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 79px; }
-.tilt-button { background: linear-gradient(140deg, #fffffff5, #fbfff6a1); border: 1px solid #fff; border-radius: 50%; color: #7d9a78; width: 54px; height: 54px; box-shadow: 0 5px 14px #7ba56710, inset 0 2px 1px #fff; display: grid; place-items: center; touch-action: none; user-select: none; }
+.tilt-button { background: #e2efdfb8; border: 1px solid #a6c8a688; border-radius: 50%; color: #6c9572; width: 54px; height: 54px; display: grid; place-items: center; touch-action: none; user-select: none; }
 .tilt-button svg { width: 23px; height: 23px; }
 .tilt-controls > span { font-size: 13px; color: #86a484; display: flex; align-items: center; gap: 9px; }
 .tilt-controls > span svg { width: 19px; height: 19px; stroke-width: 1.5; }
@@ -106,7 +102,7 @@ h2 { font-size: 16px; font-weight: 650; }
 .combo-toast.show { opacity: 1; transform: translateY(0); }
 
 .right-column { padding-top: 4px; }
-.goal-section { position: relative; text-align: center; border: 1px solid #fff; border-radius: 36px; background: var(--glass); padding: 23px 20px 20px; box-shadow: 0 8px 22px #a1be8510; backdrop-filter: blur(10px); }
+.goal-section { position: relative; text-align: center; padding: 23px 20px 20px; }
 .tag { font-size: 10px; background: #e4f4dc; color: #609064; border-radius: 20px; padding: 8px 13px; display: inline-block; }
 .goal-section h2 { font-size: 21px; margin-top: 15px; font-weight: 750; }
 .goal-fruit { position: relative; height: 185px; display: flex; justify-content: center; align-items: center; margin-top: 8px; }
@@ -115,7 +111,7 @@ h2 { font-size: 16px; font-weight: 650; }
 .spark-one { top: 17px; right: 0; transform: rotate(9deg); }
 .spark-two { bottom: 20px; left: 0; font-size: 32px; }
 .goal-caption { font-size: 12px; color: #829e7e; display: inline-block; margin-top: 7px; }
-.evolution-section { border: 1px solid #fff; border-radius: 30px; padding: 22px 23px 21px; margin-top: 16px; background: var(--glass); box-shadow: 0 7px 25px #9abc8a08; backdrop-filter: blur(10px); }
+.evolution-section { border-top: 1px solid #9dbb9a61; border-radius: 0; padding: 22px 23px 21px; margin-top: 16px; }
 .section-title { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
 .section-title h2 { font-size: 16px; font-weight: 700; }
 .section-title > span { font-size: 11px; color: #879d7e; }
@@ -252,14 +248,14 @@ kbd { font-family: inherit; display: inline-block; border: 1px solid #d8e8cf; bo
   .game-layout { display: flex; flex-direction: column; gap: 0; margin: 16px auto 0; max-width: 470px; }
   .left-column { width: 100%; display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(100px, 1fr); align-items: stretch; gap: 10px; margin-bottom: 14px; padding: 0; background: none; border: 0; border-radius: 0; box-shadow: none; backdrop-filter: none; }
   .intro, .physics-section, .little-note { display: none; }
-  .score-section { padding: 11px 15px; margin: 0; border: 1px solid #fff; border-radius: 23px; display: grid; grid-template-columns: .8fr 1fr; column-gap: 10px; align-items: center; background: #ffffffc9; }
+  .score-section { padding: 11px 15px; margin: 0; border-top: 1px solid #9dbb9a61; display: grid; grid-template-columns: .8fr 1fr; column-gap: 10px; align-items: center; }
   .score-section .section-label { font-size: 9px; background: none; padding: 0; gap: 4px; white-space: nowrap; }
   .score-section .section-label svg { width: 11px; height: 11px; }
   .score-number { font-size: 37px; margin-top: 5px; grid-column: 1; grid-row: 2; line-height: 1; }
   .best-score { grid-column: 2; grid-row: 1 / 3; margin: 0; display: flex; flex-wrap: wrap; column-gap: 4px; row-gap: 6px; align-self: center; font-size: 9px; }
   .best-score svg { width: 12px; height: 12px; }
   .best-score strong { flex-basis: 100%; margin: 0 0 0 16px; font-size: 16px; }
-  .next-section { padding: 10px 8px; margin: 0; min-height: 0; border: 1px solid #fff; border-radius: 23px; justify-content: center; gap: 3px; background: #ffffffc9; }
+  .next-section { padding: 10px 8px; margin: 0; min-height: 0; border-top: 1px solid #9dbb9a61; justify-content: center; gap: 3px; }
   .next-section .section-label { font-size: 10px; background: none; padding: 0; }
   .next-name { font-size: 9px; margin-top: 8px; white-space: nowrap; }
   .next-fruit-wrap, .next-fruit-wrap canvas { width: 44px; height: 44px; }
@@ -292,7 +288,7 @@ kbd { font-family: inherit; display: inline-block; border: 1px solid #d8e8cf; bo
   .energy-label small { font-size: 8px; }
   .energy-label svg { width: 12px; height: 12px; }
   .energy-track { grid-column: 1; grid-row: 2; margin-top: 0; height: 9px; }
-  .evolution-section { order: 1; padding: 20px; margin: 0; border-radius: 25px; }
+  .evolution-section { order: 1; padding: 20px; margin: 0; }
   .section-title h2 { font-size: 14px; }
   .section-title > span { font-size: 10px; }
   .fruit-collection { grid-template-columns: repeat(6, 1fr); gap: 13px 3px; margin-top: 17px; }
@@ -302,7 +298,7 @@ kbd { font-family: inherit; display: inline-block; border: 1px solid #d8e8cf; bo
   .evolution-foot { margin-top: 18px; font-size: 9px; }
   .site-footer { margin-top: 21px; min-height: 56px; font-size: 9px; justify-content: center; }
   .footer-brand { display: none; }
-  .mobile-physics { display: block; order: 0; width: 100%; padding: 17px 20px; margin: 0; border: 1px solid #fff; border-radius: 24px; background: #ffffffc9; }
+  .mobile-physics { display: block; order: 0; width: 100%; padding: 17px 20px; margin: 0; border-top: 1px solid #9dbb9a61; }
   .mobile-physics h2 { font-size: 12px; }
   .mobile-physics h2 svg { width: 15px; height: 15px; }
   .mobile-physics .mode-options { grid-template-columns: repeat(3, 1fr); margin-top: 12px; }
@@ -327,4 +323,134 @@ kbd { font-family: inherit; display: inline-block; border: 1px solid #d8e8cf; bo
   .evolution-section { padding: 19px 15px; }
   .tank-watermark strong { font-size: 28px; }
 }
+@media (min-width: 981px) {
+  .app-shell { max-width: 1360px; min-height: 100dvh; padding: 12px 24px 0; }
+  .site-header { height: 62px; padding: 0 22px; }
+  .brand-fruit { width: 44px; height: 44px; }
+  .brand-type strong { font-size: 26px; }
+  .brand-type > span { font-size: 8px; }
+  .header-caption { font-size: 11px; }
+  .header-actions { gap: 5px; }
+  .icon-button { width: 36px; height: 36px; }
+  .game-layout { grid-template-columns: minmax(0, 1fr) minmax(300px, min(575px, calc((100dvh - 208px) * .8125 + 12px))) minmax(0, 1fr); gap: 28px; margin: 12px 0 4px; }
+  .left-column, .right-column { display: flex; flex-direction: column; justify-content: space-between; height: calc(100% - 52px); border-bottom: 1px solid #9dbb9a61; }
+  .left-column { padding: 17px 18px 18px; }
+  .intro .eyebrow { font-size: 10px; padding: 6px 10px; }
+  .intro h1 { font-size: 28px; line-height: 1.36; margin-top: 9px; }
+  .handwritten { font-size: 11px; margin-top: 5px; }
+  .score-section { padding: 12px 18px; margin: 12px -19px 0; border-radius: 24px; }
+  .score-section .section-label { padding: 4px 9px; font-size: 10px; }
+  .score-number { font-size: 46px; margin-top: 7px; overflow-wrap: anywhere; }
+  .best-score { font-size: 10px; margin-top: 5px; }
+  .best-score strong { font-size: 12px; }
+  .next-section { min-height: 78px; margin: 10px -19px 0; padding: 8px 18px; border-radius: 23px; }
+  .next-section .section-label { padding: 4px 10px; font-size: 10px; }
+  .next-name { font-size: 13px; margin-top: 6px; }
+  .next-fruit-wrap, .next-fruit-wrap canvas { width: 61px; height: 61px; }
+  .physics-section { padding-top: 16px; }
+  .physics-section h2 { font-size: 12px; }
+  .mode-options { margin-top: 10px; }
+  .mode-options button { gap: 4px; padding: 8px 2px; font-size: 10px; }
+  .mode-options button svg { width: 17px; height: 17px; }
+  .material-readout { margin-top: 9px; font-size: 10px; }
+  .softness-meter b { width: 12px; height: 7px; }
+  .little-note { margin-top: 17px; font-size: 10px; }
+  .play-column { padding: 3px 6px 0; }
+  .play-column:before { bottom: 52px; border-radius: 30px; }
+  .stage-heading { height: 30px; margin: 0 14px; font-size: 10px; }
+  .stage-id { font-size: 8px; }
+  .tank { border-radius: 28px; }
+  .tank:before { border-radius: 23px; }
+  .tank:after { border-radius: 22px; }
+  .tank-watermark span { font-size: 26px; }
+  .tank-watermark strong { font-size: 35px; }
+  .tilt-controls { height: 52px; padding: 0 20px; }
+  .tilt-button { width: 40px; height: 40px; }
+  .tilt-button svg { width: 19px; height: 19px; }
+  .tilt-controls > span { font-size: 11px; }
+  .right-column { padding-top: 3px; padding-bottom: 8px; }
+  .goal-section { padding: 14px 14px 12px; border-radius: 27px; }
+  .tag { font-size: 8px; padding: 5px 10px; }
+  .goal-section h2 { font-size: 17px; margin-top: 8px; }
+  .goal-fruit { height: 125px; margin-top: 1px; }
+  .goal-fruit canvas { width: 167px; height: 148px; }
+  .goal-caption { font-size: 10px; margin-top: 1px; }
+  .spark { font-size: 29px; }
+  .spark-two { font-size: 23px; }
+  .evolution-section { padding: 15px 17px 14px; margin-top: 10px; border-radius: 24px; }
+  .section-title h2 { font-size: 13px; }
+  .fruit-collection { gap: 6px 3px; margin-top: 12px; }
+  .fruit-item { gap: 2px; }
+  .fruit-item canvas { width: 40px; height: 40px; }
+  .fruit-item span { font-size: 9px; }
+  .evolution-foot { margin-top: 12px; font-size: 9px; }
+  .mini-line { width: 14px; }
+  .stir-section { margin-top: 11px; padding: 0 5px; }
+  .stir-button { height: 45px; font-size: 15px; }
+  .stir-button > svg:first-child { width: 20px; height: 20px; }
+  .energy-label { margin-top: 12px; font-size: 10px; }
+  .energy-track { height: 8px; margin-top: 5px; }
+  .site-footer { min-height: 30px; margin-top: 4px; font-size: 9px; }
+  .footer-brand { font-size: 8px; }
+}
+@media (min-width: 981px) and (min-height: 830px) {
+  .left-column { padding: 22px 21px; }
+  .intro h1 { font-size: 31px; }
+  .score-section { padding: 17px 18px; margin-top: 17px; }
+  .score-number { font-size: 55px; }
+  .next-section { min-height: 90px; margin-top: 14px; }
+  .next-fruit-wrap, .next-fruit-wrap canvas { width: 69px; height: 69px; }
+  .physics-section { padding-top: 21px; }
+  .mode-options button { font-size: 11px; gap: 6px; }
+  .little-note { margin-top: 23px; }
+  .goal-section { padding: 18px 16px 15px; }
+  .goal-section h2 { font-size: 19px; }
+  .goal-fruit { height: 155px; }
+  .goal-fruit canvas { width: 195px; height: 173px; }
+  .evolution-section { padding: 19px 18px 17px; }
+  .section-title h2 { font-size: 15px; }
+  .fruit-collection { gap: 8px 3px; margin-top: 15px; }
+  .fruit-item canvas { width: 45px; height: 45px; }
+  .fruit-item span { font-size: 10px; }
+  .stir-button { height: 50px; font-size: 16px; }
+}
+@media (min-width: 981px) and (max-height: 740px) {
+  .app-shell { padding-top: 8px; }
+  .site-header { height: 54px; }
+  .game-layout { margin-top: 8px; }
+  .intro h1 { font-size: 25px; line-height: 1.3; }
+  .intro { padding-bottom: 0; }
+  .handwritten { margin-top: 3px; font-size: 10px; }
+  .left-column { padding-top: 13px; padding-bottom: 13px; }
+  .score-section { margin-top: 9px; padding-top: 9px; padding-bottom: 9px; }
+  .score-number { font-size: 40px; }
+  .next-section { min-height: 67px; padding-top: 5px; padding-bottom: 5px; }
+  .next-fruit-wrap, .next-fruit-wrap canvas { width: 53px; height: 53px; }
+  .physics-section { padding-top: 12px; }
+  .little-note { margin-top: 11px; }
+  .goal-fruit { height: 95px; }
+  .goal-fruit canvas { width: 130px; height: 115px; }
+  .goal-section { padding-top: 11px; padding-bottom: 9px; }
+  .goal-section h2 { font-size: 16px; }
+  .evolution-section { padding-top: 12px; padding-bottom: 11px; }
+  .fruit-collection { margin-top: 9px; gap: 4px 3px; }
+  .fruit-item canvas { width: 34px; height: 34px; }
+  .evolution-foot { margin-top: 8px; }
+  .site-footer { min-height: 24px; }
+}
+@media (min-width: 981px) and (max-height: 640px) {
+  .handwritten, .little-note, .goal-caption, .evolution-foot { display: none; }
+  .goal-section { padding-top: 4px; padding-bottom: 3px; }
+  .goal-section h2 { margin-top: 3px; font-size: 14px; }
+  .goal-fruit { height: 66px; margin-top: 0; }
+  .goal-fruit canvas { width: 88px; height: 78px; }
+  .evolution-section { margin-top: 4px; padding-top: 7px; padding-bottom: 6px; }
+  .fruit-collection { margin-top: 5px; gap: 3px 3px; }
+  .fruit-item { gap: 0; }
+  .fruit-item canvas { width: 31px; height: 31px; }
+  .stir-section { margin-top: 6px; }
+  .energy-label { margin-top: 7px; }
+  .energy-track { margin-top: 3px; }
+}
+.site-header, .score-section, .next-section, .evolution-section, .mobile-physics { border-radius: 0; }
 @media (prefers-reduced-motion: reduce) { *, *:before, *:after { animation: none !important; transition: none !important; } }

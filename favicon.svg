@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="瓜叽西瓜">
+  <defs>
+    <radialGradient id="skin" cx="33%" cy="25%" r="82%">
+      <stop stop-color="#c1e2af"/>
+      <stop offset=".58" stop-color="#91c99e"/>
+      <stop offset="1" stop-color="#69aa85"/>
+    </radialGradient>
+    <clipPath id="melon"><ellipse cx="32" cy="35" rx="23.5" ry="23"/></clipPath>
+  </defs>
+  <path d="M31 12Q29 7 34 6" fill="none" stroke="#618f64" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M31 9C35 3 42 3 48 7 46 13 39 16 31 12Z" fill="#6ca875"/>
+  <path d="M34 10Q40 8 46 7" fill="none" stroke="#aed5a2" stroke-width="1.4" stroke-linecap="round"/>
+  <ellipse cx="32" cy="35" rx="23.5" ry="23" fill="url(#skin)" stroke="#4e9571" stroke-width="1.5"/>
+  <g clip-path="url(#melon)" fill="none" stroke="#4f9b74" stroke-opacity=".7" stroke-width="5" stroke-linecap="round">
+    <path d="M13 11C22 21 10 35 19 60"/>
+    <path d="M27 11C35 24 21 34 30 60"/>
+    <path d="M40 10C49 24 34 37 44 60"/>
+    <path d="M52 11C61 24 47 39 56 60"/>
+  </g>
+  <path d="M18 24C20 19 23 18 26 18" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3.8" stroke-linecap="round"/>
+  <ellipse cx="23.5" cy="40" rx="3.6" ry="2.1" fill="#eb9e9e" opacity=".78"/>
+  <ellipse cx="41" cy="40" rx="3.6" ry="2.1" fill="#eb9e9e" opacity=".78"/>
+  <ellipse cx="26.5" cy="36.5" rx="1.8" ry="2.4" fill="#304c42"/>
+  <ellipse cx="37.5" cy="36.5" rx="1.8" ry="2.4" fill="#304c42"/>
+  <circle cx="26" cy="35.8" r=".65" fill="#fff"/>
+  <circle cx="37" cy="35.8" r=".65" fill="#fff"/>
+  <path d="M29.5 43q2.5 3 5 0" fill="none" stroke="#304c42" stroke-width="1.9" stroke-linecap="round"/>
+</svg>

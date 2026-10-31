@@ -4,12 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f4f8f4">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" sizes="any">
   <meta name="description" content="瓜叽 MelonFlow，一池软乎乎的水果，半流体物理合成小游戏。">
   <title>瓜叽 MelonFlow · 半流体水果派对</title>
   <link rel="stylesheet" href="styles.css">
   <script defer src="vendor/matter.min.js"></script>
   <script defer src="vendor/lucide.min.js"></script>
   <script defer src="fruit-art.js"></script>
+  <script defer src="game-audio.js"></script>
   <script defer src="game.js"></script>
 </head>
 <body>
@@ -23,7 +25,7 @@
       <span class="header-caption">一颗水果的软着陆计划</span>
       <nav class="header-actions" aria-label="游戏设置">
         <button class="icon-button" id="help-button" title="玩法" aria-label="查看玩法"><i data-lucide="circle-help"></i></button>
-        <button class="icon-button" id="sound-button" title="开启声音" aria-label="开启声音" aria-pressed="false"><i data-lucide="volume-x"></i></button>
+        <button class="icon-button" id="sound-button" title="关闭声音" aria-label="关闭声音" aria-pressed="true"><i data-lucide="volume-2"></i></button>
         <button class="icon-button" id="pause-button" title="暂停" aria-label="暂停游戏" aria-pressed="false"><i data-lucide="pause"></i></button>
         <span class="action-divider"></span>
         <button class="icon-button" id="restart-button" title="重新开始" aria-label="重新开始"><i data-lucide="rotate-ccw"></i></button>
@@ -105,7 +107,7 @@
     <button class="icon-button modal-close" aria-label="关闭玩法"><i data-lucide="x"></i></button>
     <div class="eyebrow">WELCOME TO MELON CLUB</div><h2>一池水果，慢慢变大。</h2>
     <p>移动鼠标瞄准，点击投放；在手机上拖动瞄准，松手投放。两颗相同的水果碰在一起，就会融合长大。</p>
-    <p>直接按住水果，就可以揉捏、拉伸，松手后软软地弹回来。切换果冻、半流体、果汁，感受不同弹性。</p>
+    <p>果池里的水果会自然挤压、回弹，不能手动拖动。切换果冻、半流体、果汁，感受不同弹性。</p>
     <p>按住左右按钮倾斜果池，或消耗 30 能量搅一搅。能量会慢慢恢复。</p>
     <p>水果持续超过警戒线 3 秒，本局结束。合出大西瓜后可以继续挑战更高分！</p>
     <div class="key-guide"><span><kbd>←</kbd><kbd>→</kbd> 瞄准</span><span><kbd>Enter</kbd> 投放</span><span><kbd>A</kbd><kbd>D</kbd> 倾斜</span><span><kbd>Space</kbd> 搅动</span><span><kbd>P</kbd> 暂停</span></div>
